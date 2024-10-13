@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/reso-inventory-viewer/static/css/main.f855e6bc.css",
-    "main.js": "/reso-inventory-viewer/static/js/main.8989e7f9.js",
+    "main.css": "/reso-inventory-viewer/static/css/main.9a5c6096.css",
+    "main.js": "/reso-inventory-viewer/static/js/main.9443fede.js",
     "static/js/453.17beb431.chunk.js": "/reso-inventory-viewer/static/js/453.17beb431.chunk.js",
-    "static/media/logo.svg": "/reso-inventory-viewer/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
     "index.html": "/reso-inventory-viewer/index.html",
-    "main.f855e6bc.css.map": "/reso-inventory-viewer/static/css/main.f855e6bc.css.map",
-    "main.8989e7f9.js.map": "/reso-inventory-viewer/static/js/main.8989e7f9.js.map",
+    "main.9a5c6096.css.map": "/reso-inventory-viewer/static/css/main.9a5c6096.css.map",
+    "main.9443fede.js.map": "/reso-inventory-viewer/static/js/main.9443fede.js.map",
     "453.17beb431.chunk.js.map": "/reso-inventory-viewer/static/js/453.17beb431.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f855e6bc.css",
-    "static/js/main.8989e7f9.js"
+    "static/css/main.9a5c6096.css",
+    "static/js/main.9443fede.js"
   ]
 }
