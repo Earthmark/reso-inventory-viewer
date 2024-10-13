@@ -1,5 +1,5 @@
-import { useAppSelector } from "./app/hooks";
-import { records, ResoRecord } from "./features/manifestSlice";
+import { useAppSelector } from "../app/hooks";
+import { records, ResoRecord } from "../features/manifestSlice";
 import {
   Column,
   CompactTable,
@@ -11,11 +11,11 @@ const COLUMNS: Array<Column<ResoRecord>> = [
   { label: "size", renderCell: (item) => item.totalSize },
 ];
 
-function Manifest() {
+function Records() {
   const nodes = useAppSelector(records);
   const data = { nodes };
 
   return <CompactTable columns={COLUMNS} data={data} />;
 }
 
-export default Manifest;
+export default Records;

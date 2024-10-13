@@ -1,18 +1,32 @@
-import { Container, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import { useAppDispatch } from "./app/hooks";
 import { loadManifest } from "./features/manifestSlice";
+import { useCallback, useRef, useState } from "react";
 
 function Landing() {
   const dispatch = useAppDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-  const loadFile = (file: File) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", (loadEvent) => {
-      const manifest = JSON.parse((loadEvent.target as any).result);
+  const loadFile = useCallback(async () => {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) {
+      setErr(
+        "Failed to load file, try again, this shouldn't happen in practice."
+      );
+      return;
+    }
+    try {
+      const text = await file.text();
+      const manifest = JSON.parse(text);
       dispatch(loadManifest(manifest));
-    });
-    reader.readAsText(file);
-  };
+    } catch {
+      setErr(
+        "An error occurred while parsing the file, the wrong file might have been selected or the file might be corrupt."
+      );
+    }
+  }, [dispatch]);
 
   return (
     <Container className="px-4 py-5 my-5 text-center">
@@ -63,14 +77,29 @@ function Landing() {
             <Form.Label>
               Load the json file from <em>/requestRecordUsageJSON</em>
             </Form.Label>
-            <Form.Control
-              type="file"
-              accept="application/json"
-              onChange={(e) =>
-                loadFile((e.target as any as { files: File[] }).files[0])
-              }
-            />
+            <div className="input-group">
+              <Form.Control
+                ref={fileInputRef}
+                type="file"
+                accept="application/json"
+                onChange={() =>
+                  setLoaded((fileInputRef.current?.files?.length ?? 0) !== 0)
+                }
+              />
+              <Button
+                className="input-group-append"
+                disabled={!loaded}
+                onClick={() => loadFile()}
+              >
+                Load Records
+              </Button>
+            </div>
           </Form.Group>
+          {err && (
+            <div className="alert alert-danger mt-3" role="alert">
+              {err}
+            </div>
+          )}
         </div>
       </div>
     </Container>

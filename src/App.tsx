@@ -2,11 +2,11 @@ import "./App.css";
 import { useAppSelector } from "./app/hooks";
 import { manifestLoaded } from "./features/manifestSlice";
 import Landing from "./Landing";
-import Manifest from "./Manifest";
+import Manifest from "./viewer/Manifest";
 
 function App() {
-  const wasLoaded = useAppSelector(manifestLoaded);
-  return <>{wasLoaded ? <Manifest /> : <Landing />}</>;
+  const currentUnloaded = !useAppSelector(manifestLoaded);
+  return currentUnloaded ? <Landing /> : <Manifest />;
 }
 
 export default App;
