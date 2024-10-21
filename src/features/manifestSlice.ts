@@ -1,4 +1,4 @@
-import { createSelector, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
 
 import data from "../free-assets.json";
@@ -53,11 +53,14 @@ export interface ResoAsset {
 interface ManifestState {
   records: Record<string, ResoRecord>;
   assets: Record<string, ResoAsset>;
+  error?: string;
+  loading: boolean;
 }
 
 const initialState: ManifestState = {
   records: {},
   assets: {},
+  loading: false,
 };
 
 export const manifestSlice = createAppSlice({
@@ -67,60 +70,72 @@ export const manifestSlice = createAppSlice({
     unloadManifest: create.reducer((state) => {
       Object.assign(state, initialState);
     }),
-    loadManifest: create.reducer(
-      (state, action: PayloadAction<Array<RawResoRecord>>) => {
-        Object.assign(state, initialState);
+    loadManifest: create.asyncThunk(
+      async (file: File) => {
+        const text = await file.text();
+        return JSON.parse(text) as RawResoRecord[];
+      },
+      {
+        pending: (state) => {
+          Object.assign(state, initialState);
+          state.loading = true;
+        },
+        rejected: (state) => {
+          Object.assign(state, initialState);
+          state.error = "Error loading manifest.";
+        },
+        fulfilled: (state, action) => {
+          Object.assign(state, initialState);
 
-        action.payload.forEach((rec) => {
-          const stateRecord: ResoRecord = (state.records[rec.id] = {
-            id: rec.id,
-            assetUri: rec.assetUri,
-            name: rec.name,
-            recordType: rec.recordType,
-            ownerName: rec.ownerName,
-            path: rec.path,
-            thumbnailUri: rec.thumbnailUri,
-            isPublic: rec.isPublic,
-            creationTime: rec.creationTime,
-            lastModificationTime: rec.lastModificationTime,
-            totalSize: 0,
-            assets: [],
-          });
+          action.payload.forEach((rec) => {
+            const stateRecord: ResoRecord = (state.records[rec.id] = {
+              id: rec.id,
+              assetUri: rec.assetUri,
+              name: rec.name,
+              recordType: rec.recordType,
+              ownerName: rec.ownerName,
+              path: rec.path,
+              thumbnailUri: rec.thumbnailUri,
+              isPublic: rec.isPublic,
+              creationTime: rec.creationTime,
+              lastModificationTime: rec.lastModificationTime,
+              totalSize: 0,
+              assets: [],
+            });
 
-          rec.assetManifest.forEach((asset) => {
-            const stateAsset =
-              state.assets[asset.hash] ??
-              (state.assets[asset.hash] = {
-                hash: asset.hash,
-                bytes: asset.bytes,
-                free: freeAssets[asset.hash] ?? false,
-                records: [],
-              });
-            stateAsset.records.push(rec.id);
-            stateRecord.assets.push(asset.hash);
-            stateRecord.totalSize += asset.bytes;
+            rec.assetManifest.forEach((asset) => {
+              const stateAsset =
+                state.assets[asset.hash] ??
+                (state.assets[asset.hash] = {
+                  hash: asset.hash,
+                  bytes: asset.bytes,
+                  free: freeAssets[asset.hash] ?? false,
+                  records: [],
+                });
+              stateAsset.records.push(rec.id);
+              stateRecord.assets.push(asset.hash);
+              stateRecord.totalSize += asset.bytes;
+            });
           });
-        });
+        },
       }
     ),
   }),
   selectors: {
-    manifestLoaded: (m) => Object.keys(m.records).length !== 0,
-    records: (m) => Object.values(m.records),
+    manifestLoaded: (m) => Object.entries(m.records).length !== 0,
+    manifest: (m) => m,
+    manifestError: (m) => m.error,
     record: (m, id) => m.records[id],
-    assets: (m) => Object.values(m.assets),
     asset: (m, id) => m.assets[id],
   },
 });
 
-export const records = createSelector(
-  [manifestSlice.selectors.records],
-  (r) => r
+export const records = createSelector([manifestSlice.selectors.manifest], (r) =>
+  Object.values(r.records)
 );
-export const assets = createSelector(
-  [manifestSlice.selectors.assets],
-  (a) => a
+export const assets = createSelector([manifestSlice.selectors.manifest], (a) =>
+  Object.values(a.assets)
 );
 
-export const { loadManifest, unloadManifest } = manifestSlice.actions;
-export const { manifestLoaded, record, asset } = manifestSlice.selectors;
+export const { unloadManifest, loadManifest } = manifestSlice.actions;
+export const { manifestLoaded, record, asset, manifestError } = manifestSlice.selectors;

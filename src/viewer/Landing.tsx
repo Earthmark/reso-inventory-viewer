@@ -1,6 +1,6 @@
 import { Button, Container, Form } from "react-bootstrap";
-import { useAppDispatch } from "./app/hooks";
-import { loadManifest } from "./features/manifestSlice";
+import { useAppDispatch } from "../app/hooks";
+import { loadManifest } from "../features/manifestSlice";
 import { useCallback, useRef, useState } from "react";
 
 function Landing() {
@@ -18,9 +18,7 @@ function Landing() {
       return;
     }
     try {
-      const text = await file.text();
-      const manifest = JSON.parse(text);
-      dispatch(loadManifest(manifest));
+      dispatch(loadManifest(file));
     } catch {
       setErr(
         "An error occurred while parsing the file, the wrong file might have been selected or the file might be corrupt."

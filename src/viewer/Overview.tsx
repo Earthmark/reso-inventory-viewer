@@ -1,6 +1,3 @@
-
-const Overview = () => {
-    return <></>;
-}
+const Overview = () => <></>;
 
 export default Overview;
