@@ -1,29 +1,20 @@
 import { Button, Container, Form } from "react-bootstrap";
-import { useAppDispatch } from "../app/hooks";
-import { loadManifest } from "../features/manifestSlice";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { loadManifest, manifestError } from "../features/manifestSlice";
 import { useCallback, useRef, useState } from "react";
 
 function Landing() {
   const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [loadable, setLoadable] = useState(false);
+  const err = useAppSelector(manifestError);
 
   const loadFile = useCallback(async () => {
     const file = fileInputRef.current?.files?.[0];
     if (!file) {
-      setErr(
-        "Failed to load file, try again, this shouldn't happen in practice."
-      );
       return;
     }
-    try {
-      dispatch(loadManifest(file));
-    } catch {
-      setErr(
-        "An error occurred while parsing the file, the wrong file might have been selected or the file might be corrupt."
-      );
-    }
+    await dispatch(loadManifest(file));
   }, [dispatch]);
 
   return (
@@ -81,12 +72,12 @@ function Landing() {
                 type="file"
                 accept="application/json"
                 onChange={() =>
-                  setLoaded((fileInputRef.current?.files?.length ?? 0) !== 0)
+                  setLoadable((fileInputRef.current?.files?.length ?? 0) !== 0)
                 }
               />
               <Button
                 className="input-group-append"
-                disabled={!loaded}
+                disabled={!loadable}
                 onClick={() => loadFile()}
               >
                 Load Records

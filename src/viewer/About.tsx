@@ -1,3 +1,3 @@
-const About = () => <></>;
+const About = () => <>About</>;
 
 export default About;

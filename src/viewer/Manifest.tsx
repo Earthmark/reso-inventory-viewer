@@ -1,26 +1,19 @@
 import { Link, Route, Routes } from "react-router-dom";
-import Overview from "./Overview";
-import Records from "./Records";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Github, QuestionCircle } from "react-bootstrap-icons";
+import About from "./About";
+import Viewer from "./Viewer";
 
 const Manifest = () => (
   <>
-    <Navbar className="bg-body-tertiary">
+    <Navbar>
       <Container>
         <Navbar.Brand as={Link} to="/">
-          Inventory Viewer
+          Inventory Plotter
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/records">
-              Records
-            </Nav.Link>
-            <Nav.Link as={Link} to="/assets">
-              Assets
-            </Nav.Link>
-          </Nav>
+          <Nav className="me-auto" />
           <Nav>
             <Nav.Link as={Link} to="/about">
               <QuestionCircle />
@@ -32,10 +25,12 @@ const Manifest = () => (
         </Navbar.Collapse>
       </Container>
     </Navbar>
-    <Routes>
-      <Route path="/" element={<Overview />} />
-      <Route path="/records" element={<Records />} />
-    </Routes>
+    <Container>
+      <Routes>
+        <Route path="/*" element={<Viewer />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Container>
   </>
 );
 
