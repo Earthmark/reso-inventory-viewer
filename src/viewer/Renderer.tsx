@@ -18,7 +18,7 @@ function NodeLabelRenderer(
   rawLookup: Record<string, ResoAssetBundle>,
   selected: Array<string>
 ) {
-  const selectedTag = _.indexOf(selected, node.id) === -1 ? "<br>Selected" : "";
+  const selectedTag = _.indexOf(selected, node.id) !== -1 ? "<br>Selected" : "";
   switch (node.type) {
     case "assetBundle":
       return `${bytesToSize(node.size)}<br>Used in ${

@@ -19,7 +19,7 @@ function Landing() {
 
   return (
     <Container className="px-4 py-5 my-5 text-center">
-      <h1 className="header text-center">Resonite Inventory Plotter</h1>
+      <h1 className="header text-center">Resonite Inventory Viewer</h1>
       <p className="text-center text-muted">
         By <a href="https://github.com/earthmark">Earthmark</a>
       </p>
