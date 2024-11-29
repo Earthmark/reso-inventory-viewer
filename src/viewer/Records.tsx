@@ -20,16 +20,10 @@ import {
   CellSelect,
   SelectTypes,
   useRowSelect,
-  Select,
 } from "@table-library/react-table-library/select";
 import { useEffect, useRef } from "react";
 import _ from "lodash";
-import {
-  useSort,
-  HeaderCellSort,
-  SortIconPositions,
-  SortToggleType,
-} from "@table-library/react-table-library/sort";
+import { useSort } from "@table-library/react-table-library/sort";
 
 const TypedVirtualized = Virtualized<ResoRecord>;
 
@@ -74,20 +68,6 @@ const Records = () => {
   // updates when re-integrating the redux state into the list state.
   const dispatchUpdates = useRef(true);
 
-  useEffect(() => {
-    dispatchUpdates.current = false;
-    const toAdd = _.without(selRecords, ...select.state.ids);
-    const toRemove = _.without(select.state.ids, ...selRecords);
-    if (toAdd.length > 0) {
-      select.fns.onAddByIds(toAdd, {});
-    }
-    if (toRemove.length > 0) {
-      select.fns.onRemoveByIds(toRemove);
-    }
-    dispatchUpdates.current = true;
-    // eslint-disable-next-line
-  }, [selRecords]);
-
   // for some reason rowSelect's state management is very messy.
   // It contains a lot of duplicate rows, and other funky stuff.
   // Our redux store de-duplicates the data,
@@ -106,6 +86,20 @@ const Records = () => {
       rowSelect: SelectTypes.MultiSelect,
     }
   );
+
+  useEffect(() => {
+    dispatchUpdates.current = false;
+    const toAdd = _.without(selRecords, ...select.state.ids);
+    const toRemove = _.without(select.state.ids, ...selRecords);
+    if (toAdd.length > 0) {
+      select.fns.onAddByIds(toAdd, {});
+    }
+    if (toRemove.length > 0) {
+      select.fns.onRemoveByIds(toRemove);
+    }
+    dispatchUpdates.current = true;
+    // eslint-disable-next-line
+  }, [selRecords]);
 
   const sort = useSort(
     data,
