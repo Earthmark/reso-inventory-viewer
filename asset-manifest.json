@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/reso-inventory-viewer/static/css/main.d88b881e.css",
-    "main.js": "/reso-inventory-viewer/static/js/main.c566a683.js",
+    "main.js": "/reso-inventory-viewer/static/js/main.517975ad.js",
     "static/js/453.e2f7fcfe.chunk.js": "/reso-inventory-viewer/static/js/453.e2f7fcfe.chunk.js",
     "index.html": "/reso-inventory-viewer/index.html",
     "main.d88b881e.css.map": "/reso-inventory-viewer/static/css/main.d88b881e.css.map",
-    "main.c566a683.js.map": "/reso-inventory-viewer/static/js/main.c566a683.js.map",
+    "main.517975ad.js.map": "/reso-inventory-viewer/static/js/main.517975ad.js.map",
     "453.e2f7fcfe.chunk.js.map": "/reso-inventory-viewer/static/js/453.e2f7fcfe.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d88b881e.css",
-    "static/js/main.c566a683.js"
+    "static/js/main.517975ad.js"
   ]
 }
