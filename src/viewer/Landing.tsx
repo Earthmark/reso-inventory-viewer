@@ -17,6 +17,10 @@ function Landing() {
     await dispatch(loadManifest(file));
   }, [dispatch]);
 
+  const [copied, setCopied] = useState(false);
+
+  const recordsCommand = "/requestRecordUsageJSON";
+
   return (
     <Container className="px-4 py-5 my-5 text-center">
       <h1 className="header text-center">Resonite Inventory Viewer</h1>
@@ -32,8 +36,19 @@ function Landing() {
         <div className="card-body">
           <h5 className="card-title">Getting Started</h5>
           <p>
-            In Resonite, send the <b>Resonite</b> contact the message{" "}
-            <em>/requestRecordUsageJSON</em>
+            In Resonite, send the <b>Resonite</b> contact the message {" "}
+            <div className="alert alert-secondary">
+              {copied ? '✅' : '📋'}{" "}
+              <em onClick={(e) => {
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(e.target as HTMLElement);
+                selection?.removeAllRanges();
+                selection?.addRange(range);
+                setCopied(true);
+                navigator.clipboard.writeText(recordsCommand);
+              }}>{recordsCommand}</em>
+            </div>
           </p>
           <p>
             Once the report is generated, it will be sent to the email address
@@ -64,7 +79,7 @@ function Landing() {
           </div>
           <Form.Group controlId="formFile">
             <Form.Label>
-              Load the json file from <em>/requestRecordUsageJSON</em>
+              Load the json file from your email
             </Form.Label>
             <div className="input-group">
               <Form.Control
