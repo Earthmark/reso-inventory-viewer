@@ -7,21 +7,17 @@
     "@emotion/react": "^11.14.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@table-library/react-table-library": "^4.1.15",
-    "@types/jest": "^27.5.2",
     "@types/lodash": "^4.17.24",
     "bootstrap": "^5.3.8",
     "lodash": "^4.18.1",
     "next": "^16.2.6",
-    "next-redux-wrapper": "^8.1.0",
     "react": "^19.2.6",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.2.6",
     "react-force-graph-2d": "^1.29.1",
     "react-redux": "^9.2.0",
-    "react-sizeme": "^3.0.2",
-    "redux": "^5.0.1",
-    "web-vitals": "^2.1.4"
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.19.41",
@@ -36,23 +32,5 @@
     "dev": "next dev",
     "build": "next build",
     "start": "npx serve@latest ./build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   }
 }

@@ -2,7 +2,7 @@ import { createSelector, PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "./createAppSlice";
 import _ from "lodash";
 
-import data from "../free-assets.json";
+import data from "@/src/free-assets.json";
 
 const freeAssets: Record<string, boolean> = {};
 
@@ -281,7 +281,7 @@ export const manifestSlice = createAppSlice({
         return;
       }
 
-      const index = _.sortedIndex(state.selectedRecords, update.type)
+      const index = _.sortedIndex(state.selectedRecords, id);
       if (state.selectedRecords[index] === id) {
         state.selectedRecords.splice(index, 1);
       } else {
@@ -289,13 +289,9 @@ export const manifestSlice = createAppSlice({
       }
     }),
     selectRecords: create.reducer((state, update: PayloadAction<string[]>) => {
-      state.selectedRecords = [];
-      for (const record of _.uniq(update.payload)) {
-        if (state.records[record]) {
-          state.selectedRecords.push(record);
-        }
-        state.selectedRecords.sort();
-      }
+      state.selectedRecords = _.uniq(update.payload)
+        .filter((id) => state.records[id])
+        .sort();
     }),
   }),
   selectors: {

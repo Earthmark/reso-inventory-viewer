@@ -1,13 +1,14 @@
-'use client'
+"use client";
 
-import { useAppDispatch, useAppSelector } from "../../features/hooks";
+import { Card } from "react-bootstrap";
+import { useAppDispatch, useAppSelector } from "@/src/features/hooks";
 import {
   filteredAssetLookup,
   filteredRecords,
   ResoRecord,
   selectedRecords,
   selectRecords,
-} from "../../features/manifestSlice";
+} from "@/src/features/manifestSlice";
 import {
   Cell,
   HeaderCell,
@@ -16,14 +17,15 @@ import {
   Table,
 } from "@table-library/react-table-library/table";
 import { Virtualized } from "@table-library/react-table-library/virtualized";
-import { bytesToSize } from "../../util";
+import { useTheme } from "@table-library/react-table-library/theme";
+import { bytesToSize } from "@/src/util";
 import {
   HeaderCellSelect,
   CellSelect,
   SelectTypes,
   useRowSelect,
 } from "@table-library/react-table-library/select";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import _ from "lodash";
 import { useSort } from "@table-library/react-table-library/sort";
 
@@ -51,20 +53,35 @@ function isSelected(selected: Array<string>, id: string): number {
 }
 
 const sortFns = (
-  selected: Array<string>
+  selected: Array<string>,
 ): Record<string, (nodes: ResoRecord[]) => ResoRecord[]> => ({
   SELECTED: (nodes) =>
     nodes.sort(
-      (a, b) => isSelected(selected, a.id) - isSelected(selected, b.id)
+      (a, b) => isSelected(selected, a.id) - isSelected(selected, b.id),
     ),
 });
+
+// @table-library uses CSS grid under the hood. Without an explicit
+// grid-template-columns the columns auto-size and end up uneven (the long
+// name column squashes the rest). This locks in sensible widths.
+//   - select  : tight checkbox column
+//   - name    : flex, takes remaining space
+//   - others  : sized to content / data
+const RECORDS_THEME = {
+  Table: `
+    --data-table-library_grid-template-columns:
+      44px minmax(180px, 1fr) 90px 140px 110px 90px 130px;
+  `,
+};
 
 const Records = () => {
   const dispatch = useAppDispatch();
   const assetBundles = useAppSelector(filteredAssetLookup);
   const nodes = useAppSelector(filteredRecords);
-  const data = { nodes };
+  const data = useMemo(() => ({ nodes }), [nodes]);
   const selRecords = useAppSelector(selectedRecords);
+
+  const theme = useTheme(RECORDS_THEME);
 
   // This allows the useEffect below to not trigger dispatch
   // updates when re-integrating the redux state into the list state.
@@ -73,7 +90,6 @@ const Records = () => {
   // for some reason rowSelect's state management is very messy.
   // It contains a lot of duplicate rows, and other funky stuff.
   // Our redux store de-duplicates the data,
-
   const select = useRowSelect(
     data,
     {
@@ -86,7 +102,7 @@ const Records = () => {
     },
     {
       rowSelect: SelectTypes.MultiSelect,
-    }
+    },
   );
 
   useEffect(() => {
@@ -100,23 +116,25 @@ const Records = () => {
       select.fns.onRemoveByIds(toRemove);
     }
     dispatchUpdates.current = true;
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selRecords]);
 
   const sort = useSort(
     data,
-    {
-      onChange: (act, sta) => console.log(act, sta),
-    },
+    {},
     {
       sortFns: sortFns(selRecords) as any,
-    }
+    },
   );
 
   return (
-    <div style={{ height: "400px" }}>
+    // height: 100% + flex column so the table library gets a real pixel
+    // height from the flex parent rather than the old hardcoded 400px.
+    <Card className="shadow-sm" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ flex: 1, minHeight: 0 }}>
       <Table
         data={data}
+        theme={theme}
         layout={{ isDiv: true, fixedHeader: true }}
         select={select}
         sort={sort}
@@ -132,14 +150,14 @@ const Records = () => {
                 <HeaderCell>Type</HeaderCell>
                 <HeaderCell>Last Update Time</HeaderCell>
                 <HeaderCell>Internal Size</HeaderCell>
-                <HeaderCell>Referenced Asset Bundles</HeaderCell>
+                <HeaderCell>Bundles</HeaderCell>
                 <HeaderCell>Referenced Size</HeaderCell>
               </HeaderRow>
             )}
             body={(item) => (
               <Row item={item}>
                 <CellSelect item={item}></CellSelect>
-                <Cell stiff>{Name(item)}</Cell>
+                <Cell>{Name(item)}</Cell>
                 <Cell>{item.type}</Cell>
                 <Cell>{ToRealisticDate(item)}</Cell>
                 <Cell>{bytesToSize(item.internalSize)}</Cell>
@@ -148,8 +166,8 @@ const Records = () => {
                   {bytesToSize(
                     item.sharedAssetBundles.reduce(
                       (cur, a) => cur + assetBundles[a].size,
-                      0
-                    )
+                      0,
+                    ),
                   )}
                 </Cell>
               </Row>
@@ -158,6 +176,7 @@ const Records = () => {
         )}
       </Table>
     </div>
+    </Card>
   );
 };
 

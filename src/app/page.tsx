@@ -1,9 +1,9 @@
 "use client";
 
-import { manifestLoaded, unloadManifest } from "../features/manifestSlice";
+import { manifestLoaded, unloadManifest } from "@/src/features/manifestSlice";
 import { Button, Container, Form } from "react-bootstrap";
-import { useAppDispatch, useAppSelector } from "../features/hooks";
-import { loadManifest, manifestError } from "../features/manifestSlice";
+import { useAppDispatch, useAppSelector } from "@/src/features/hooks";
+import { loadManifest, manifestError } from "@/src/features/manifestSlice";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -45,7 +45,7 @@ function Landing() {
         may break at any time.
         <br />
       </p>
-      <div className="card col-lg-6 mx-auto m-4">
+      <div className="card shadow-sm col-lg-6 mx-auto m-4">
         <div className="card-body">
           <h5 className="card-title">Getting Started</h5>
           <span>

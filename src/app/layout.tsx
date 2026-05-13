@@ -1,8 +1,8 @@
 'use client';
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import "../App.css";
-import { store } from "../features/store";
+import "@/src/App.css";
+import { store } from "@/src/features/store";
 import { Provider } from "react-redux";
 
 export default function RootLayout({
