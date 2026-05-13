@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Action,
   combineSlices,
@@ -5,7 +7,7 @@ import {
   ThunkAction,
 } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { manifestSlice } from "../features/manifestSlice";
+import { manifestSlice } from "./manifestSlice";
 
 const reducer = combineSlices(manifestSlice);
 export type RootState = ReturnType<typeof reducer>;

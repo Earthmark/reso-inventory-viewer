@@ -1,5 +1,10 @@
-import { ForceGraph2D } from "react-force-graph";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+"use client";
+
+import dynamic from "next/dynamic";
+const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
+  ssr: false,
+});
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
   assetLookup,
   filteredAssets,
@@ -8,15 +13,15 @@ import {
   ResoRecord,
   selectedRecords,
   toggleSelectRecord,
-} from "../features/manifestSlice";
+} from "../../features/manifestSlice";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { bytesToSize } from "../util";
+import { bytesToSize } from "../../util";
 import _ from "lodash";
 
 function NodeLabelRenderer(
   node: ResoRecord | ResoAssetBundle,
   rawLookup: Record<string, ResoAssetBundle>,
-  selected: Array<string>
+  selected: Array<string>,
 ) {
   const selectedTag = _.indexOf(selected, node.id) !== -1 ? "<br>Selected" : "";
   switch (node.type) {
@@ -32,7 +37,7 @@ function NodeLabelRenderer(
       return `Message<br>${bytesToSize(node.internalSize)}${selectedTag}`;
     case "object":
       return `${node.fullName}<br>${bytesToSize(
-        node.internalSize
+        node.internalSize,
       )}${selectedTag}`;
     case "texture":
       return `User avatar<br>${bytesToSize(node.internalSize)}${selectedTag}`;
@@ -76,7 +81,7 @@ const Renderer = () => {
 
     const nodes = [...r, ...a];
     const links = r.flatMap((r) =>
-      r.sharedAssetBundles.map((a) => ({ source: r.id, target: a }))
+      r.sharedAssetBundles.map((a) => ({ source: r.id, target: a })),
     );
 
     return {
@@ -104,11 +109,11 @@ const Renderer = () => {
         onNodeClick={(n) => {
           // Only records can be selected, which is any kind other than an asset bundle.
           if (n.type !== "assetBundle") {
-            dispatch(toggleSelectRecord(n.id));
+            dispatch(toggleSelectRecord(n.id as string));
           }
         }}
         nodeLabel={(node) =>
-          NodeLabelRenderer(node, srcAssets, selected) as string
+          NodeLabelRenderer(node as any, srcAssets, selected) as string
         }
         nodeAutoColorBy={(n) =>
           n.type +

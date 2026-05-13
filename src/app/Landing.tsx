@@ -1,5 +1,7 @@
+'use client';
+
 import { Button, Container, Form } from "react-bootstrap";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../features/hooks";
 import { loadManifest, manifestError } from "../features/manifestSlice";
 import { useCallback, useRef, useState } from "react";
 
@@ -35,7 +37,7 @@ function Landing() {
       <div className="card col-lg-6 mx-auto m-4">
         <div className="card-body">
           <h5 className="card-title">Getting Started</h5>
-          <p>
+          <span>
             In Resonite, send the <b>Resonite</b> contact the message {" "}
             <div className="alert alert-secondary">
               {copied ? '✅' : '📋'}{" "}
@@ -49,7 +51,7 @@ function Landing() {
                 navigator.clipboard.writeText(recordsCommand);
               }}>{recordsCommand}</em>
             </div>
-          </p>
+          </span>
           <p>
             Once the report is generated, it will be sent to the email address
             bound to the Resonite account in a zip file.

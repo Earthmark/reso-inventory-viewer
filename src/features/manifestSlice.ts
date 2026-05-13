@@ -1,5 +1,5 @@
 import { createSelector, PayloadAction } from "@reduxjs/toolkit";
-import { createAppSlice } from "../app/createAppSlice";
+import { createAppSlice } from "./createAppSlice";
 import _ from "lodash";
 
 import data from "../free-assets.json";

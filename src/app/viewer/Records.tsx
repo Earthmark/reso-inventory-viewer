@@ -1,11 +1,13 @@
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+'use client'
+
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
   filteredAssetLookup,
   filteredRecords,
   ResoRecord,
   selectedRecords,
   selectRecords,
-} from "../features/manifestSlice";
+} from "../../features/manifestSlice";
 import {
   Cell,
   HeaderCell,
@@ -14,7 +16,7 @@ import {
   Table,
 } from "@table-library/react-table-library/table";
 import { Virtualized } from "@table-library/react-table-library/virtualized";
-import { bytesToSize } from "../util";
+import { bytesToSize } from "../../util";
 import {
   HeaderCellSelect,
   CellSelect,
@@ -125,7 +127,7 @@ const Records = () => {
             rowHeight={30}
             header={() => (
               <HeaderRow>
-                <HeaderCellSelect sortKey="SELECTED"></HeaderCellSelect>
+                <HeaderCellSelect></HeaderCellSelect>
                 <HeaderCell>Name</HeaderCell>
                 <HeaderCell>Type</HeaderCell>
                 <HeaderCell>Last Update Time</HeaderCell>

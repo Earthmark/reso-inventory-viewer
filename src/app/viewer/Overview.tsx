@@ -1,5 +1,5 @@
 import { Form, Table } from "react-bootstrap";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../features/hooks";
 import {
   assetLookup,
   filter,
@@ -10,9 +10,9 @@ import {
   ResoRecord,
   selectedRecords,
   updateFilter,
-} from "../features/manifestSlice";
+} from "../../features/manifestSlice";
 import { useMemo } from "react";
-import { bytesToSize } from "../util";
+import { bytesToSize } from "../../util";
 
 interface SelectionMetrics {
   records: number;
