@@ -1,13 +1,25 @@
+"use client";
+
+import { manifestLoaded, unloadManifest } from "@/src/features/manifestSlice";
 import { Button, Container, Form } from "react-bootstrap";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { loadManifest, manifestError } from "../features/manifestSlice";
-import { useCallback, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/src/features/hooks";
+import { loadManifest, manifestError } from "@/src/features/manifestSlice";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function Landing() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [loadable, setLoadable] = useState(false);
   const err = useAppSelector(manifestError);
+
+  const currentlyLoaded = useAppSelector(manifestLoaded);
+  useEffect(() => {
+    if (currentlyLoaded) {
+      dispatch(unloadManifest());
+    }
+  }, []);
 
   const loadFile = useCallback(async () => {
     const file = fileInputRef.current?.files?.[0];
@@ -15,6 +27,7 @@ function Landing() {
       return;
     }
     await dispatch(loadManifest(file));
+    router.push("/viewer");
   }, [dispatch]);
 
   const [copied, setCopied] = useState(false);
@@ -32,24 +45,28 @@ function Landing() {
         may break at any time.
         <br />
       </p>
-      <div className="card col-lg-6 mx-auto m-4">
+      <div className="card shadow-sm col-lg-6 mx-auto m-4">
         <div className="card-body">
           <h5 className="card-title">Getting Started</h5>
-          <p>
-            In Resonite, send the <b>Resonite</b> contact the message {" "}
+          <span>
+            In Resonite, send the <b>Resonite</b> contact the message{" "}
             <div className="alert alert-secondary">
-              {copied ? '✅' : '📋'}{" "}
-              <em onClick={(e) => {
-                const selection = window.getSelection();
-                const range = document.createRange();
-                range.selectNodeContents(e.target as HTMLElement);
-                selection?.removeAllRanges();
-                selection?.addRange(range);
-                setCopied(true);
-                navigator.clipboard.writeText(recordsCommand);
-              }}>{recordsCommand}</em>
+              {copied ? "✅" : "📋"}{" "}
+              <em
+                onClick={(e) => {
+                  const selection = window.getSelection();
+                  const range = document.createRange();
+                  range.selectNodeContents(e.target as HTMLElement);
+                  selection?.removeAllRanges();
+                  selection?.addRange(range);
+                  setCopied(true);
+                  navigator.clipboard.writeText(recordsCommand);
+                }}
+              >
+                {recordsCommand}
+              </em>
             </div>
-          </p>
+          </span>
           <p>
             Once the report is generated, it will be sent to the email address
             bound to the Resonite account in a zip file.
@@ -78,9 +95,7 @@ function Landing() {
             </p>
           </div>
           <Form.Group controlId="formFile">
-            <Form.Label>
-              Load the json file from your email
-            </Form.Label>
+            <Form.Label>Load the json file from your email</Form.Label>
             <div className="input-group">
               <Form.Control
                 ref={fileInputRef}

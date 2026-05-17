@@ -1,48 +1,27 @@
 # reso-inventory-viewer
 
-A viewer for a user's Resonite inventory, to help diagnose storage issues.
+A browser-based viewer for your Resonite inventory, built to help diagnose
+storage usage. Load your inventory export and explore what's taking up space
+via a searchable record table and an interactive force graph.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Live site:** https://earthmark.github.io/reso-inventory-viewer
 
-## Available Scripts
+## Getting your inventory file
 
-In the project directory, you can run:
+In Resonite, send the **Resonite** contact the message
+`/requestRecordUsageJSON`. The bot replies with a zipped `RecordUsage.json`
+to the email associated with your account. Drop that file into the app to
+get started.
 
-### `npm start`
+Everything is processed entirely in-browser — nothing is uploaded.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Development
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+| Script           | What it does                                             |
+| ---------------- | -------------------------------------------------------- |
+| `npm run dev`    | Start the dev server on http://localhost:3000            |
+| `npm run build`  | Build a static export into `./build`                     |
+| `npm start`      | Serve the built export locally                           |
+| `npm run deploy` | Push `./build` to the `gh-pages` branch                  |
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+For architecture notes and gotchas, see [CLAUDE.md](./CLAUDE.md).

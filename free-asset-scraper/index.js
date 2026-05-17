@@ -1,7 +1,7 @@
-const undici = require("undici");
-const fs = require("fs");
+import { Pool } from "undici";
+import { readFileSync, writeFileSync } from "fs";
 
-const pool = new undici.Pool("https://api.resonite.com", {
+const pool = new Pool("https://api.resonite.com", {
   connections: 10,
 });
 
@@ -17,7 +17,7 @@ async function getAssetMetadata(assetId) {
 }
 
 function loadManifest(path) {
-  const manifest = JSON.parse(fs.readFileSync(path));
+  const manifest = JSON.parse(readFileSync(path));
 
   const assets = new Set();
 
@@ -54,7 +54,7 @@ async function main() {
 
   const freeAssets = assetMetadata.filter(met => met.free).map(met => met.assetHash);
 
-  fs.writeFileSync("../src/free-assets.json", JSON.stringify(freeAssets));
+  writeFileSync("../src/free-assets.json", JSON.stringify(freeAssets));
 }
 
 main();

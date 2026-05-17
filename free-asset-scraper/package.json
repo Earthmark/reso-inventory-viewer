@@ -9,6 +9,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "undici": "^6.20.0"
+    "undici": "^6.25.0"
   }
 }
