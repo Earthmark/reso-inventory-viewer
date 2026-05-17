@@ -1,5 +1,4 @@
-import { Form, Table } from "react-bootstrap";
-import { useAppDispatch, useAppSelector } from "@/src/features/hooks";
+import { useAppSelector } from "@/src/features/hooks";
 import {
   assetLookup,
   filter,
@@ -9,9 +8,8 @@ import {
   ResoAssetBundle,
   ResoRecord,
   selectedRecords,
-  updateFilter,
 } from "@/src/features/manifestSlice";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { bytesToSize } from "@/src/util";
 
 interface SelectionMetrics {
@@ -69,15 +67,25 @@ const useSelectionSizes = (
     };
   }, [records, allAssets, includeProvided]);
 
+// A single number + optional size sub-label, used in the stats grid.
+const Stat = ({ count, size }: { count: number; size?: number }) => (
+  <div className="text-center">
+    <div className="fs-4 fw-bold lh-1">{count}</div>
+    {size !== undefined && (
+      <div className="text-muted" style={{ fontSize: "0.72rem" }}>
+        {bytesToSize(size)}
+      </div>
+    )}
+  </div>
+);
+
 const Overview = () => {
-  const dispatch = useAppDispatch();
   const f = useAppSelector(filter);
 
   const recordList = useAppSelector(records);
   const recordMap = useAppSelector(recordLookup);
   const assetMap = useAppSelector(assetLookup);
   const selected = useAppSelector(selectedRecords);
-
   const filteredRecordList = useAppSelector(filteredRecords);
 
   const selectedRec = useMemo(
@@ -85,135 +93,48 @@ const Overview = () => {
     [selected, recordMap]
   );
 
-  const totalSizes = useSelectionSizes(
-    recordList,
-    assetMap,
-    f.showResoniteProvidedAssets
-  );
-  const filteredSizes = useSelectionSizes(
-    filteredRecordList,
-    assetMap,
-    f.showResoniteProvidedAssets
-  );
-  const selectedSizes = useSelectionSizes(
-    selectedRec,
-    assetMap,
-    f.showResoniteProvidedAssets
-  );
+  const totalSizes = useSelectionSizes(recordList, assetMap, f.showResoniteProvidedAssets);
+  const filteredSizes = useSelectionSizes(filteredRecordList, assetMap, f.showResoniteProvidedAssets);
+  const selectedSizes = useSelectionSizes(selectedRec, assetMap, f.showResoniteProvidedAssets);
+
+  // Column widths: label takes the left side, the three data columns share the rest equally.
+  const labelStyle: React.CSSProperties = { width: "30%", fontSize: "0.8rem" };
+  const colStyle: React.CSSProperties = { width: "23.33%" };
 
   return (
-    <>
-      <Form>
-        <Form.Switch
-          label="Objects"
-          inline
-          checked={f.showObjects}
-          onChange={(e) =>
-            dispatch(
-              updateFilter({
-                showObjects: e.target.checked,
-              })
-            )
-          }
-        />
-        <Form.Switch
-          label="Worlds"
-          inline
-          checked={f.showWorlds}
-          onChange={(e) =>
-            dispatch(
-              updateFilter({
-                showWorlds: e.target.checked,
-              })
-            )
-          }
-        />
-        <Form.Switch
-          label="Messages"
-          inline
-          checked={f.showMessages}
-          onChange={(e) =>
-            dispatch(
-              updateFilter({
-                showMessages: e.target.checked,
-              })
-            )
-          }
-        />
-        <Form.Switch
-          label="User Avatar"
-          inline
-          checked={f.showAvatar}
-          onChange={(e) =>
-            dispatch(
-              updateFilter({
-                showAvatar: e.target.checked,
-              })
-            )
-          }
-        />
-        <Form.Switch
-          label="Resonite Provided Assets"
-          inline
-          checked={f.showResoniteProvidedAssets}
-          onChange={(e) =>
-            dispatch(
-              updateFilter({
-                showResoniteProvidedAssets: e.target.checked,
-              })
-            )
-          }
-        />
-      </Form>
-      <Table striped bordered>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Records</th>
-            <th>Direct Assets</th>
-            <th>Referenced Assets</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Total</td>
-            <td>{totalSizes.records}</td>
-            <td>
-              {totalSizes.directAssets}
-              <br />({bytesToSize(totalSizes.directSize)})
-            </td>
-            <td>
-              {totalSizes.referencedAssets}
-              <br />({bytesToSize(totalSizes.referencedSize)})
-            </td>
-          </tr>
-          <tr>
-            <td>Filtered</td>
-            <td>{filteredSizes.records}</td>
-            <td>
-              {filteredSizes.directAssets}
-              <br />({bytesToSize(filteredSizes.directSize)})
-            </td>
-            <td>
-              {filteredSizes.referencedAssets}
-              <br />({bytesToSize(filteredSizes.referencedSize)})
-            </td>
-          </tr>
-          <tr>
-            <td>Selected</td>
-            <td>{selectedSizes.records}</td>
-            <td>
-              {selectedSizes.directAssets}
-              <br />({bytesToSize(selectedSizes.directSize)})
-            </td>
-            <td>
-              {selectedSizes.referencedAssets}
-              <br />({bytesToSize(selectedSizes.referencedSize)})
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-    </>
+    <div>
+      {/* Column headers */}
+      <div className="d-flex text-center text-muted fw-semibold mb-3" style={{ fontSize: "0.8rem" }}>
+        <div style={labelStyle} />
+        <div style={colStyle}>Total</div>
+        <div style={colStyle}>Filtered</div>
+        <div style={colStyle}>Selected</div>
+      </div>
+
+      {/* Records row */}
+      <div className="d-flex align-items-center mb-4">
+        <div style={labelStyle} className="text-muted">Records</div>
+        <div style={colStyle}><Stat count={totalSizes.records} /></div>
+        <div style={colStyle}><Stat count={filteredSizes.records} /></div>
+        <div style={colStyle}><Stat count={selectedSizes.records} /></div>
+      </div>
+
+      {/* Direct Assets row */}
+      <div className="d-flex align-items-center mb-4">
+        <div style={labelStyle} className="text-muted">Direct<br />Assets</div>
+        <div style={colStyle}><Stat count={totalSizes.directAssets} size={totalSizes.directSize} /></div>
+        <div style={colStyle}><Stat count={filteredSizes.directAssets} size={filteredSizes.directSize} /></div>
+        <div style={colStyle}><Stat count={selectedSizes.directAssets} size={selectedSizes.directSize} /></div>
+      </div>
+
+      {/* Referenced Assets row */}
+      <div className="d-flex align-items-center">
+        <div style={labelStyle} className="text-muted">Referenced<br />Assets</div>
+        <div style={colStyle}><Stat count={totalSizes.referencedAssets} size={totalSizes.referencedSize} /></div>
+        <div style={colStyle}><Stat count={filteredSizes.referencedAssets} size={filteredSizes.referencedSize} /></div>
+        <div style={colStyle}><Stat count={selectedSizes.referencedAssets} size={selectedSizes.referencedSize} /></div>
+      </div>
+    </div>
   );
 };
 

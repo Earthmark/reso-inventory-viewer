@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Card, Container, Nav, Navbar, Col, Row } from "react-bootstrap";
+import { Container, Nav, Navbar, Col, Row } from "react-bootstrap";
 import { Github } from "react-bootstrap-icons";
-import Overview from "./Overview";
 import Records from "./Records";
 import Renderer from "./Renderer";
 import { useRouter } from "next/navigation";
@@ -18,13 +17,12 @@ function Manifest() {
     if (!currentlyLoaded) {
       router.push("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentlyLoaded, router]);
 
   return (
-    // Fixed-height column so the records table can flex-grow to fill the
-    // remaining space rather than relying on a hardcoded pixel height.
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    // vh-100 + d-flex flex-column: standard Bootstrap pattern for a
+    // full-viewport-height page that doesn't body-scroll.
+    <div className="d-flex flex-column vh-100">
       <Navbar bg="dark" data-bs-theme="dark">
         <Container fluid>
           <Navbar.Brand as={Link} href="/">
@@ -41,34 +39,27 @@ function Manifest() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* Bootstrap's `.row` has negative left/right margins that compensate
-          for a parent Container's padding. Without a Container wrapper the
-          row overflows the viewport, producing an unwanted horizontal
-          scrollbar on the body. */}
+
+      {/* Bootstrap's .row has negative left/right margins that compensate
+          for a Container's horizontal padding. Without a Container wrapper
+          the row overflows the viewport and causes a horizontal scrollbar. */}
       <Container
         fluid
-        className="px-3 pt-3"
-        style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}
+        className="d-flex flex-column flex-grow-1 py-3"
+        style={{ minHeight: 0 }}  // flex children won't shrink below content without this
       >
-        <Row className="g-3">
-          <Col xs={12} lg={4}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <Overview />
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={12} lg={8}>
-            <Card className="h-100 shadow-sm">
-              <Card.Body className="p-0">
-                <Renderer />
-              </Card.Body>
-            </Card>
+        {/* Graph row — natural height set by the Renderer's minHeight. */}
+        <Row className="mb-2">
+          <Col xs={12}>
+            <Renderer />
           </Col>
         </Row>
-        {/* Separate row so it can flex-grow independently of the top panels. */}
-        <Row className="g-3" style={{ flex: 1, minHeight: 0 }}>
-          <Col xs={12} style={{ height: "100%" }}>
+
+        {/* Records row — flex-grow-1 fills whatever height the graph leaves.
+            minHeight: 0 is required so the row can shrink below its content
+            height (a CSS flex quirk Bootstrap has no utility class for). */}
+        <Row className="flex-grow-1" style={{ minHeight: 0 }}>
+          <Col xs={12} className="h-100">
             <Records />
           </Col>
         </Row>

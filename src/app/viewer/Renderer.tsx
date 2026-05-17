@@ -20,6 +20,15 @@ import _ from "lodash";
 
 type GraphNode = ResoRecord | ResoAssetBundle;
 
+const NODE_COLORS: Record<string, { base: string; selected: string }> = {
+  object: { base: "#5b8db8", selected: "#1e3f5c" },
+  world: { base: "#6aaa64", selected: "#1e5228" },
+  audio: { base: "#e8a838", selected: "#7a5010" },
+  texture: { base: "#c47bb0", selected: "#5c2a50" },
+  "assetBundle|false": { base: "#e07070", selected: "#8a2a2a" }, // user-owned
+  "assetBundle|true": { base: "#90b8b4", selected: "#3a6460" }, // Resonite-provided
+};
+
 function NodeLabelRenderer(
   node: GraphNode,
   rawLookup: Record<string, ResoAssetBundle>,
@@ -100,13 +109,13 @@ const Renderer = () => {
     [srcAssets, selected],
   );
 
-  const nodeAutoColorBy = useCallback(
-    (n: any) =>
-      n.type +
-      "|" +
-      (n.type === "assetBundle" ? n.resoniteProvided : "") +
-      "|" +
-      (_.indexOf(selected, n.id) === -1),
+  const nodeColor = useCallback(
+    (n: any) => {
+      const key =
+        n.type === "assetBundle" ? `assetBundle|${n.resoniteProvided}` : n.type;
+      const palette = NODE_COLORS[key] ?? { base: "#999", selected: "#333" };
+      return _.indexOf(selected, n.id) !== -1 ? palette.selected : palette.base;
+    },
     [selected],
   );
 
@@ -134,7 +143,7 @@ const Renderer = () => {
         d3AlphaMin={0.01}
         onNodeClick={onNodeClick}
         nodeLabel={nodeLabel}
-        nodeAutoColorBy={nodeAutoColorBy}
+        nodeColor={nodeColor}
       />
     </div>
   );
